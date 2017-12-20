@@ -116,7 +116,11 @@
     },
   ];
 
-  var countDownDate = new Date("Dec 20, 2017 12:30:00").getTime();
+  var countDownDate = new Date()
+  countDownDate.setHours(12);
+  countDownDate.setMinutes(30);
+  countDownDate.setSeconds(0);
+  countDownDate = countDownDate.getTime();
 
   var $clock = $('#clock');
   var $clockWrapper = $('#clock-wrapper');
