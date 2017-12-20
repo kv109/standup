@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Blank HTML5</title>
+  <style>
+    body {
+      margin: 40px;
+    }
+    #users-list {
+      font-size: 30px;
+    }
+
+    #winner {
+      font-size: 50px;
+      color: red;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+    }
+
+    .avatar-large {
+      width: 128px;
+      height: 128px;
+    }
+
+    #users-list li * {
+      display: inline;
+    }
+
+    #users-list img {
+      margin-right: 20px;
+      position: relative;
+      top: 15px;
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script src="https://cdn.rawgit.com/hilios/jQuery.countdown/2.2.0/dist/jquery.countdown.min.js"></script>
+</head>
+<body>
+
+<div id="clock-wrapper">
+  <h1>Tech standup starts in:</h1>
+  <h2 class="clock" id="clock"></h2>
+</div>
+
+<div id="users-wrapper">
+  <h1>
+    Who will be running this meeting?
+  </h1>
+  <h2>
+    Drawing...
+  </h2>
+  <ul id="users-list">
+
+  </ul>
+</div>
+
+<div id="winner-wrapper">
+  <h1>
+    The winner is:
+  </h1>
+  <div id="winner"></div>
+  <h2>Standup questions:</h2>
+  <ul>
+    <li>What was done?</li>
+    <li>What is planned?</li>
+    <li>Are there any blockers / questions?</li>
+  </ul>
+</div>
+
+<script>
+  var users = [
+    {
+      name: "Darek",
+      avatar: "https://avatars2.githubusercontent.com/u/150861?s=460&v=4"
+    },
+    {
+      name: "Kacper",
+      avatar: "https://avatars1.githubusercontent.com/u/399968?s=460&v=4"
+    },
+    {
+      name: "Maciek",
+      avatar: "https://avatars1.githubusercontent.com/u/30107?s=460&v=4"
+    },
+    {
+      name: "Piotr",
+      avatar: "https://avatars1.githubusercontent.com/u/96238?s=460&v=4"
+    },
+    {
+      name: "Ignacy",
+      avatar: "https://avatars3.githubusercontent.com/u/25693?s=460&v=4"
+    },
+    {
+      name: "Chris D",
+      avatar: "https://avatars0.githubusercontent.com/u/1758834?s=460&v=4"
+    },
+    {
+      name: "Chris S",
+      avatar: "https://avatars3.githubusercontent.com/u/87532?s=460&v=4"
+    },
+    {
+      name: "Paweł",
+      avatar: "https://avatars2.githubusercontent.com/u/546845?s=460&v=4"
+    },
+    {
+      name: "Tomek",
+      avatar: "https://avatars1.githubusercontent.com/u/95296?s=460&v=4"
+    },
+    {
+      name: "Jacek",
+      avatar: "https://ca.slack-edge.com/T02E3SANA-U0A22JG03-a7a3c1a60638-1024"
+    },
+  ];
+
+  var countDownDate = new Date("Dec 20, 2017 12:30:00").getTime();
+
+  var $clock = $('#clock');
+  var $clockWrapper = $('#clock-wrapper');
+  var $usersWrapper = $('#users-wrapper');
+  var $winnerWrapper = $('#winner-wrapper');
+
+  var interval;
+
+  $usersWrapper.hide();
+  $winnerWrapper.hide();
+
+  $clock.countdown(countDownDate, function(event) {
+    if (event.type === 'finish') {
+      afterCountdown()
+    } else {
+      $(this).html(event.strftime('%H:%M:%S'));
+    }
+  });
+
+  function afterCountdown() {
+    $clockWrapper.hide();
+    $usersWrapper.show();
+    users.forEach(function(user) {
+      var htmlText = `<div>` + user.name + `</div>`;
+      var htmlAvatar = `<div><img class="avatar" src="` + user.avatar + `"/>`;
+      var html = `<li id="` + parameterize(user.name) + `" class="user not-removed" data-name="` + user.name + `" data-avatar="` + user.avatar + `">` + htmlAvatar + htmlText + `</li>`;
+      $('#users-list').append(html);
+    });
+    interval = setInterval(drawRunner, 2000);
+  }
+
+  function usersNotRemoved() {
+    return $('.user.not-removed');
+  }
+
+  function drawRunner() {
+    var usersLeft = usersNotRemoved().size();
+    if (usersLeft > 1) {
+      var idsToRemove = [];
+      usersNotRemoved().map(function(index, userDiv) {
+        idsToRemove.push(parameterize($(userDiv).attr('id')));
+      });
+      var randomNumber = Math.floor(Math.random() * idsToRemove.length);
+      var idToRemove = idsToRemove[randomNumber];
+      $('#' + idToRemove).css({textDecoration: 'line-through', color: 'gray', fontSize: 'smaller'}).removeClass('not-removed');
+    } else {
+      clearInterval(interval);
+      var name = usersNotRemoved().eq(0).attr('data-name');
+      var avatar = usersNotRemoved().eq(0).attr('data-avatar');
+
+      var htmlText = `<div>` + name + `</div>`;
+      var htmlAvatar = `<div><img class="avatar-large" src="` + avatar + `"/>`;
+      var html = `<div>` + htmlText + htmlAvatar + `</div>`;
+
+      $('#winner').html(html);
+      $usersWrapper.hide();
+      $winnerWrapper.show();
+    }
+  }
+
+  function parameterize(str1) {
+    return str1.trim().toLowerCase().replace(/[^a-zA-Z0-9 -]/, "").replace(/\s/g, "-");
+  };
+</script>
+</body>
+</html>
