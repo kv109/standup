@@ -161,7 +161,7 @@
       var html = `<li id="` + parameterize(user.name) + `" class="user not-removed" data-name="` + user.name + `" data-avatar="` + user.avatar + `">` + htmlAvatar + htmlText + `</li>`;
       $('#users-list').append(html);
     });
-    interval = setInterval(drawRunner, 2000);
+    interval = setInterval(drawRunner, 500);
   }
 
   function usersNotRemoved() {
